@@ -10,10 +10,11 @@ generateNoiseData <- function(input, trainData = TRUE){
                                       ' } ',
                                       sep = '')))
     
-     X <- runif(n = numPoints, min = range[1], max = range[2])
+    X <- runif(n = numPoints, min = range[1], max = range[2])
     
     Y <- fun(X)
-    Y <- Y + ( noiseFun(length(Y), noiseRange))
+    noise <- ( noiseFun(length(Y), noiseRange))
+    Y <- Y + noise
     
     data.frame(X = X, Y = Y)
 }

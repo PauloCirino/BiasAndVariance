@@ -152,12 +152,8 @@ shinyServer(function(input, output) {
                                   length(reactiveResults$meanVar)),
                               name = 'Noise',
                               type = 'scatter',
-                              mode = 'lines+markers',
-                              marker = list(size = 10,
-                                            line = list(color = 'rgba(0, 0, 0, .8)',
-                                                        width = 3)),
-                              line = list(width = 5,
-                                          dash = 'dash')
+                              mode = 'lines',
+                              line = list(width = 1)
                               ) %>%
             plotly::layout(xaxis = list(title = "Error"),
                            yaxis = list (title = "Flexibility",

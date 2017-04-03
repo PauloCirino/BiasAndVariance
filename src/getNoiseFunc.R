@@ -1,9 +1,9 @@
 getNoiseFunc <- function(input){
     
-    noiseDistribution  <- input$noiseDistribution
+    noiseDistribution  <- 'Normal'
     
     f <- switch (noiseDistribution,
-                 'Normal' = rnorm,
+                 'Normal' = function(n, sd) {rnorm(n = n, sd = sd)},
                  'Exponential' = rexp,
                  'Log Normal' = rlnorm, 
                  'Uniform' = runif,

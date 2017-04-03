@@ -1,7 +1,6 @@
 # 'Regression Tree' 'Neural Network' 'Gradient Boosting'
 
-getModelFunc <- function(input){
-    model <- input$model
+getModelFunc <- function(model){
     fun <- switch (model,
                     'KNN' = callKNNFun(),
                     'SVM' = callSVNFun(),
@@ -17,21 +16,14 @@ getModelFunc <- function(input){
 callKNNFun <- function(){
     require('FNN')
     function(Xtrain, Ytrain, flexibility, Xtest) {
-        fittedTrain <- FNN::knn.reg(train = as.matrix(Xtrain),
-                                    test = as.matrix(Xtrain),
-                                    y = Ytrain,
-                                    k = flexibility,
-                                    algorithm = "kd_tree")
-        
-        fittedTest <- FNN::knn.reg(train = as.matrix(Xtrain),
-                                    test = as.matrix(Xtest),
-                                    y = Ytrain,
-                                    k = flexibility,
-                                    algorithm = "kd_tree")
+        model <- FNN::knn.reg(train = as.matrix(Xtrain),
+                              test = as.matrix(Xtest),
+                              y = Ytrain,
+                              k = flexibility,
+                              algorithm = "kd_tree")
         
         
-        list(fittedTrain = fittedTrain$pred,
-             fittedTest = fittedTest$pred)
+        model$pred
         }
 }
 
@@ -45,11 +37,7 @@ callSVNFun <- function(){
                              type = "eps-regression",
                              degree = flexibility)
         
-        fittedTrain <- predict(model, as.numeric(Xtrain))
-        fittedTest <- predict(model, as.numeric(Xtest))
-        
-        list(fittedTrain = fittedTrain,
-             fittedTest = fittedTest)
+        predict(model, as.numeric(Xtest))
     }
 }
 
@@ -66,14 +54,11 @@ callGradientBoosting <- function(){
         model <- xgboost::xgboost( params = params,
                                    data = matrix(as.numeric(Xtrain)),
                                    label = as.numeric(Ytrain),
-                                   nrounds = 50
+                                   nrounds = 25
                                    )
         
-        fittedTrain <- predict(model, matrix(as.numeric(Xtrain)))
-        fittedTest <- predict(model, matrix(as.numeric(Xtest)))
+        predict(model, matrix(as.numeric(Xtest)))
         
-        list(fittedTrain = fittedTrain,
-             fittedTest = fittedTest)
     }
 }
 # 
@@ -108,11 +93,8 @@ callNeuralNetwork <- function(){
                              linout = TRUE
         )
         
-        fittedTrain <- as.numeric( predict(model, as.matrix(Xtrain)) )
-        fittedTest <- as.numeric( predict( model, as.matrix(Xtest) ) )
+        as.numeric( predict( model, as.matrix(Xtest) ) )
         
-        list(fittedTrain = fittedTrain,
-             fittedTest = fittedTest)
     }
 }
 
@@ -123,10 +105,6 @@ callPolinomialRegressionModel <- function(){
         
         model <- lm( Y ~ poly(X, flexibility), data = trainDF )
         
-        fittedTrain <- fitted(model)
-        fittedTest <- predict(model, testDF)
-        
-        list(fittedTrain = fittedTrain,
-             fittedTest = fittedTest)
+        predict(model, testDF)
     }
 }

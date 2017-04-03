@@ -4,14 +4,6 @@
 #
 # http://shiny.rstudio.com
 #
-# 
-# funInput <- input$funInput
-# range <- input$range
-# numPoints <- input$numPoints
-# noiseRange <- input$noiseRange
-# noiseDistribution  <- input$noiseDistribution
-# model <- input$model
-# modelFlexibility <- input$modelFlexibility
 
 
 
@@ -19,7 +11,7 @@ library(shiny)
 
 shinyServer(function(input, output) {
     
-    reactiveRefresh <- reactive({ 
+    reactiveRefresh <- reactive({   
         input$refreshButton
         shiny::isolate(reactiveGenerateAll(input = input))
     })
@@ -28,7 +20,7 @@ shinyServer(function(input, output) {
         reactiveResults <- reactiveRefresh()
         
         dataOrigin <- reactiveResults$dataOrigin
-        dataNoise <- reactiveResults$dataNoiseTrain
+        dataNoise <- reactiveResults$trainSample[[1]]
         
         p <- plotly::plot_ly() %>%
             plotly::add_trace(   data = dataOrigin,
@@ -51,8 +43,8 @@ shinyServer(function(input, output) {
         reactiveResults <- reactiveRefresh()
         
         dataOrigin <- reactiveResults$dataOrigin
-        dataNoiseTrain <- reactiveResults$dataNoiseTrain
-        modelsResults <- reactiveResults$modelsResults
+        dataNoise <- reactiveResults$trainSample[[1]]
+        modelsResults <- reactiveResults$trainSample
         
         p <- plotly::plot_ly() %>%
             plotly::add_trace(   data = dataOrigin,
@@ -61,7 +53,7 @@ shinyServer(function(input, output) {
                                  name = 'Function',
                                  line = list(color = 'rgba(235, 19, 19, 0.88)',
                                              width = 4)) %>%
-            plotly::add_markers(data = dataNoiseTrain,
+            plotly::add_markers(data = dataNoise,
                                 x = ~X, y = ~Y,
                                 name = 'Train Data',
                                 marker = list(size = 5,
@@ -71,9 +63,9 @@ shinyServer(function(input, output) {
         
         for(i in 1:length(modelsResults)){
             p <- p %>%
-                plotly::add_lines(data = dataNoiseTrain,
-                                  x = ~X, y = modelsResults[[i]]$fittedTrain,
-                                  name = paste('Flex.', modelsResults[[i]]$flexibility),
+                plotly::add_lines(data = dataNoise,
+                                  x = ~X, y = modelsResults[[i]]$Ypred,
+                                  name = paste('Flex.', i + input$modelFlexibility[1]),
                                   type = 'scatter', mode = 'lines',
                                   line = list(width = 1.5),
                                   inherit = FALSE
@@ -87,8 +79,7 @@ shinyServer(function(input, output) {
         reactiveResults <- reactiveRefresh()
         
         dataOrigin <- reactiveResults$dataOrigin
-        dataNoiseTrain <- reactiveResults$dataNoiseTrain
-        modelsResults <- reactiveResults$modelsResults
+        modelsResults <- reactiveResults$testSample
        
         p <- plotly::plot_ly() %>%
             plotly::add_trace(   data = dataOrigin,
@@ -101,9 +92,9 @@ shinyServer(function(input, output) {
         for(i in 1:length(modelsResults)){
             p <- p %>%
                 plotly::add_lines(data = dataOrigin,
-                                  x = ~X, y = modelsResults[[i]]$fittedTest,
+                                  x = ~X, y = modelsResults[[i]]$Y,
                                   name = paste('Flex.',
-                                               modelsResults[[i]]$flexibility),
+                                               i + input$modelFlexibility[1] ),
                                   type = 'scatter', mode = 'lines',
                                   line = list(width = 1.5),
                                   inherit = FALSE
@@ -115,8 +106,9 @@ shinyServer(function(input, output) {
     
     output$plotViesVsVariance <- plotly::renderPlotly({ 
         reactiveResults <- reactiveRefresh()
+        
         p <- plotly::plot_ly() %>%
-            plotly::add_trace(x = 1:length(reactiveResults$meanMSETest),
+            plotly::add_trace(x = input$modelFlexibility[1] : input$modelFlexibility[2],
                               y = reactiveResults$meanMSETest,
                               name = 'MSE',
                               type = 'scatter',
@@ -127,7 +119,7 @@ shinyServer(function(input, output) {
                               line = list(width = 5,
                                           dash = 'dash')
                               ) %>%
-            plotly::add_trace(x = 1:length(reactiveResults$meanBias),
+            plotly::add_trace(x = input$modelFlexibility[1] : input$modelFlexibility[2],
                               y = reactiveResults$meanBias,
                               name = 'Bias2',
                               type = 'scatter',
@@ -137,7 +129,7 @@ shinyServer(function(input, output) {
                                                         width = 3)),
                               line = list(width = 3)
                               ) %>%
-            plotly::add_trace(x = 1:length(reactiveResults$meanVar),
+            plotly::add_trace(x = input$modelFlexibility[1] : input$modelFlexibility[2],
                               y = reactiveResults$meanVar,
                               name = 'Variance',
                               type = 'scatter',
@@ -147,10 +139,10 @@ shinyServer(function(input, output) {
                                                         width = 3)),
                               line = list(width = 3)
                               ) %>%
-            plotly::add_trace(x = 1:length(reactiveResults$meanVar),
-                              y = rep(reactiveResults$noise,
+            plotly::add_trace(x = input$modelFlexibility[1] : input$modelFlexibility[2],
+                              y = rep(reactiveResults$noiseVar,
                                   length(reactiveResults$meanVar)),
-                              name = 'Noise',
+                              name = 'Noise Variance',
                               type = 'scatter',
                               mode = 'lines',
                               line = list(width = 1)

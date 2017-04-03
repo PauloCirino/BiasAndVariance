@@ -24,13 +24,10 @@ require('RSNNS')
 require('xgboost')
 
 source('./src/utils.R')
+source('./src/getUserFun.R')
 source('./src/getNoiseFunc.R')
 source('./src/getModelFunc.R')
-source('./src/generateNoiseData.R')
-source('./src/generateOneModelAllFlex.R')
 source('./src/generateData.R')
-source('./src/genTrainTestAllData.R')
-source('./src/getBiasAndVariance.R')
 source('./src/reactiveGenerateAll.R')
 
 shinyUI(fluidPage(theme = shinytheme("sandstone"),

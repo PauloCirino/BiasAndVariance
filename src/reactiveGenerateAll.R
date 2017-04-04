@@ -11,7 +11,7 @@ reactiveGenerateAll <- function(input){
     numTrainedModels <- input$numTrainedModels
     
     fun <- getUserFun(funInput = funInput)
-    modelFun <- getModelFunc(model = model)
+    modelFun <- getModelFunc(model = model, modelFlexibility = modelFlexibility)
     
     resultDF <- data.frame()
     testData <- list()
@@ -80,13 +80,14 @@ reactiveGenerateAll <- function(input){
         
     }
     
-    
-    list(dataOrigin = testData$Data,
+    dataOrigin <- data.frame(Fx = Fx, X = XTest, Y = YTestExpected)
+    list(dataOrigin = dataOrigin,
          trainSample = trainDataSample,
          testSample = testDataSample,
          meanMSETest = resultDF$MSE,
          meanBias = resultDF$Bias,
          meanVar = resultDF$Variance,
-         noiseVar = mean(resultDF$erroVar)
+         noiseVar = mean(resultDF$erroVar),
+         modelFlexibility = modelFlexibility
     )
 }

@@ -6,7 +6,8 @@
 #
 
 ModelsOpts <- c('KNN', 'SVM', 'Polinomial Regression',
-                'Neural Network', 'Gradient Boosting')
+                'Neural Network', 'Gradient Boosting',
+                'Radom Forest', 'Regression Tree', 'Spline')
 
 NoiseDistributions <- c('Normal', 'Exponential', 'Log Normal',
                         'Uniform', 'Cauchy')
@@ -94,21 +95,21 @@ shinyUI(fluidPage(theme = shinytheme("sandstone"),
         actionButton(inputId = "refreshButton",
                      label = "Reload",
                      width = '100%',
-                     icon = icon("refresh")),
+                     icon = icon("refresh"))
         
-        shiny::hr(),
-        
-        actionButton(inputId = "clearPrevPlotsButton",
-                     label = "Clear Previous Plots",
-                     width = '100%'),
-        
-        
-        shiny::br(),
-        shiny::br(),
-        
-        actionButton(inputId = "generateDocButton",
-                     label = "Generate Document",
-                     width = '100%')
+        # shiny::hr(),
+        # 
+        # actionButton(inputId = "clearPrevPlotsButton",
+        #              label = "Clear Previous Plots",
+        #              width = '100%'),
+        # 
+        # 
+        # shiny::br(),
+        # shiny::br(),
+        # 
+        # actionButton(inputId = "generateDocButton",
+        #              label = "Generate Document",
+        #              width = '100%')
     ),
     
     mainPanel(

@@ -26,8 +26,14 @@ shinyServer(function(input, output) {
             plotly::add_trace(   data = dataOrigin,
                                  x = ~X, y = ~Y,
                                  type = 'scatter', mode = 'lines',
-                                 name = 'Function',
+                                 name = 'Y',
                                  line = list(color = 'rgba(235, 19, 19, 0.88)',
+                                             width = 4)) %>%
+            plotly::add_trace(   data = dataOrigin,
+                                 x = ~X, y = ~Fx,
+                                 type = 'scatter', mode = 'lines',
+                                 name = 'F(x)',
+                                 line = list(color = 'rgba(38, 91, 181, 0.89)',
                                              width = 4)) %>%
             plotly::add_markers(data = dataNoise,
                                 x = ~X, y = ~Y,
@@ -53,6 +59,12 @@ shinyServer(function(input, output) {
                                  name = 'Function',
                                  line = list(color = 'rgba(235, 19, 19, 0.88)',
                                              width = 4)) %>%
+            plotly::add_trace(   data = dataOrigin,
+                                 x = ~X, y = ~Fx,
+                                 type = 'scatter', mode = 'lines',
+                                 name = 'F(x)',
+                                 line = list(color = 'rgba(38, 91, 181, 0.89)',
+                                             width = 4)) %>%
             plotly::add_markers(data = dataNoise,
                                 x = ~X, y = ~Y,
                                 name = 'Train Data',
@@ -65,7 +77,7 @@ shinyServer(function(input, output) {
             p <- p %>%
                 plotly::add_lines(data = dataNoise,
                                   x = ~X, y = modelsResults[[i]]$Ypred,
-                                  name = paste('Flex.', i + input$modelFlexibility[1]),
+                                  name = paste('Flex.', i + input$modelFlexibility[1] - 1),
                                   type = 'scatter', mode = 'lines',
                                   line = list(width = 1.5),
                                   inherit = FALSE
@@ -85,7 +97,7 @@ shinyServer(function(input, output) {
             plotly::add_trace(   data = dataOrigin,
                                  x = ~X, y = ~Y,
                                  type = 'scatter', mode = 'lines',
-                                 name = 'Function',
+                                 name = 'Y',
                                  line = list(color = 'rgba(235, 19, 19, 0.88)',
                                              width = 4)) 
             
@@ -94,7 +106,7 @@ shinyServer(function(input, output) {
                 plotly::add_lines(data = dataOrigin,
                                   x = ~X, y = modelsResults[[i]]$Y,
                                   name = paste('Flex.',
-                                               i + input$modelFlexibility[1] ),
+                                               i + input$modelFlexibility[1] - 1),
                                   type = 'scatter', mode = 'lines',
                                   line = list(width = 1.5),
                                   inherit = FALSE
@@ -108,7 +120,7 @@ shinyServer(function(input, output) {
         reactiveResults <- reactiveRefresh()
         
         p <- plotly::plot_ly() %>%
-            plotly::add_trace(x = input$modelFlexibility[1] : input$modelFlexibility[2],
+            plotly::add_trace(x = reactiveResults$modelFlexibility[1] : reactiveResults$modelFlexibility[2],
                               y = reactiveResults$meanMSETest,
                               name = 'MSE',
                               type = 'scatter',
@@ -119,7 +131,7 @@ shinyServer(function(input, output) {
                               line = list(width = 5,
                                           dash = 'dash')
                               ) %>%
-            plotly::add_trace(x = input$modelFlexibility[1] : input$modelFlexibility[2],
+            plotly::add_trace(x = reactiveResults$modelFlexibility[1] : reactiveResults$modelFlexibility[2],
                               y = reactiveResults$meanBias,
                               name = 'Bias2',
                               type = 'scatter',
@@ -129,7 +141,7 @@ shinyServer(function(input, output) {
                                                         width = 3)),
                               line = list(width = 3)
                               ) %>%
-            plotly::add_trace(x = input$modelFlexibility[1] : input$modelFlexibility[2],
+            plotly::add_trace(x = reactiveResults$modelFlexibility[1] : reactiveResults$modelFlexibility[2],
                               y = reactiveResults$meanVar,
                               name = 'Variance',
                               type = 'scatter',
@@ -139,7 +151,7 @@ shinyServer(function(input, output) {
                                                         width = 3)),
                               line = list(width = 3)
                               ) %>%
-            plotly::add_trace(x = input$modelFlexibility[1] : input$modelFlexibility[2],
+            plotly::add_trace(x = reactiveResults$modelFlexibility[1] : reactiveResults$modelFlexibility[2],
                               y = rep(reactiveResults$noiseVar,
                                   length(reactiveResults$meanVar)),
                               name = 'Noise Variance',
@@ -147,8 +159,8 @@ shinyServer(function(input, output) {
                               mode = 'lines',
                               line = list(width = 1)
                               ) %>%
-            plotly::layout(xaxis = list(title = "Error"),
-                           yaxis = list (title = "Flexibility",
+            plotly::layout(xaxis = list(title = "Flexibility"),
+                           yaxis = list (title = "Error",
                                          rangemode = "tozero")
                            )
         

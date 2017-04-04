@@ -1,25 +1,30 @@
 # 'Regression Tree' 'Neural Network' 'Gradient Boosting'
 
-getModelFunc <- function(model){
+getModelFunc <- function(model, modelFlexibility){
     fun <- switch (model,
-                    'KNN' = callKNNFun(),
+                    'KNN' = callKNNFun(modelFlexibility = modelFlexibility),
                     'SVM' = callSVNFun(),
                     'Polinomial Regression' = callPolinomialRegressionModel(),
                     'Neural Network' = callNeuralNetwork(),
-                    'Gradient Boosting' = callGradientBoosting()
+                    'Gradient Boosting' = callGradientBoosting(),
+                    'Radom Forest' = callRandomForest(),
+                    'Regression Tree' = callRegressionTree(),
+                    'Spline' = callSpline()
+                   
             )
     
     eval(fun)
 
 }
 
-callKNNFun <- function(){
+callKNNFun <- function(modelFlexibility){
     require('FNN')
-    function(Xtrain, Ytrain, flexibility, Xtest) {
+    function(Xtrain, Ytrain, flexibility, Xtest,
+             kRange = modelFlexibility[2] : modelFlexibility[1] ) {
         model <- FNN::knn.reg(train = as.matrix(Xtrain),
                               test = as.matrix(Xtest),
                               y = Ytrain,
-                              k = flexibility,
+                              k = kRange[flexibility - min(kRange) + 1],
                               algorithm = "kd_tree")
         
         
@@ -106,5 +111,37 @@ callPolinomialRegressionModel <- function(){
         model <- lm( Y ~ poly(X, flexibility), data = trainDF )
         
         predict(model, testDF)
+    }
+}
+
+callRandomForest <- function(){
+    require('randomForest')
+    function(Xtrain, Ytrain, flexibility, Xtest){
+        trainDF <- data.frame(Y = Ytrain, X = Xtrain)
+        testDF <- data.frame(X = Xtest)
+        
+        model <- randomForest( Y ~ X, data = trainDF, ntree = flexibility)
+        
+        predict(model, testDF)
+    }
+}
+
+callRegressionTree <- function(){
+    require('rpart')
+    function(Xtrain, Ytrain, flexibility, Xtest){
+        trainDF <- data.frame(Y = Ytrain, X = Xtrain)
+        testDF <- data.frame(X = Xtest)
+        
+        model <- rpart( Y ~ X, data = trainDF,
+                        control = rpart.control( maxdepth = flexibility))
+        
+        predict(model, testDF)
+    }
+}
+
+callSpline <- function(){
+    function(Xtrain, Ytrain, flexibility, Xtest){
+        model <- smooth.spline(x = Xtrain, y = Ytrain, df = flexibility)
+        predict(model, Xtest)
     }
 }

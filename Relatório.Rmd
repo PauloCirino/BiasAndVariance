@@ -40,7 +40,10 @@ E por dedução matemática é possível obter :
 $$ {\displaystyle {\begin{aligned}\mathrm {Bias} {\big [}{\hat {f}}(x){\big ]}=\mathrm {E} {\big [}{\hat {f}}(x)-f(x){\big ]}\end{aligned}}} $$
 
 ## Material Base
-O material base desse trabalho é baseado na plataforma [https://paulocirino.shinyapps.io/BiasAndVariance/](https://paulocirino.shinyapps.io/BiasAndVariance/) que possibilita a visualização do problema viés e variância para diversas funções e modelos de forma interativa, o código fonto da plataforma é aberto no meu (github)[https://github.com/PauloCirino/BiasAndVariance] pessoal.
+O material base desse trabalho é baseado na plataforma [https://paulocirino.shinyapps.io/BiasAndVariance/](https://paulocirino.shinyapps.io/BiasAndVariance/) que possibilita a visualização do problema viés e variância para diversas funções e modelos de forma interativa, o código fonto da plataforma é aberto no meu (github)[https://github.com/PauloCirino/BiasAndVariance] pessoal. 
+
+Segue imagem da plataforma abaixo:
+![Platform Image](./imgs/platform.png)
 
 Os cálculos de viés e variância foram feitos com base no exemplo fornecido em python da (sckit-learn)[http://scikit-learn.org/stable/auto_examples/ensemble/plot_bias_variance.html].
 

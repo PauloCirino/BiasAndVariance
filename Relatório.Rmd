@@ -74,10 +74,12 @@ f1 <- function(nObs = 40, minX = -8, maxX = 12, step = 0.1){
     Ytrain <- Ytrain + noise
     
     Xtest <- seq(from = minX, to = maxX, by = step)
-    Ytest <- ((Xtest-2) * (2*Xtest + 1)) / (1 + Xtest**2)
+    FXtest <- ((Xtest-2) * (2*Xtest + 1)) / (1 + Xtest**2)
+    noise <- ( rnorm(length(FXtest), sd = 0.25))
+    Ytest <- FXtest + noise
     
     list(train = data.frame(Xtrain = Xtrain, Ytrain = Ytrain),
-         test = data.frame(Xtest = Xtest, Ytest = Ytest),
+         test = data.frame(Xtest = Xtest, Ytest = Ytest, FXtest = FXtest),
          noiseVar = var(noise)
     )
 }
@@ -89,10 +91,12 @@ f2 <- function(nObs = 40, minX = 0, maxX = 6.28, step = 0.1){
     Ytrain <- Ytrain + noise
     
     Xtest <- seq(from = minX, to = maxX, by = step)
-    Ytest <- sin(Xtest)
+    FXtest <- sin(Xtest)
+    noise <- ( rnorm(length(FXtest), sd = 0.25))
+    Ytest <- FXtest + noise
     
     list(train = data.frame(Xtrain = Xtrain, Ytrain = Ytrain),
-         test = data.frame(Xtest = Xtest, Ytest = Ytest),
+         test = data.frame(Xtest = Xtest, Ytest = Ytest, FXtest = FXtest),
          noiseVar = var(noise)
     )
 }
@@ -119,6 +123,7 @@ for(fPos in 1:length(Funcs)){
         auxData <- f(nObs = nObs)
         
         YTestExpected <- auxData$test$Ytest
+        Fx <- auxData$test$FXtest
         YTestPredictMatrix <- matrix(ncol = nModels, nrow = length(YTestExpected))
         noiseVar <- numeric(length = nModels)
         
@@ -137,7 +142,7 @@ for(fPos in 1:length(Funcs)){
         meanMSE <- mean( apply(YTestPredictMatrix, 2, function(x){
                 mean( (x - YTestExpected) ** 2 )
         }))
-        meanBias <- mean( (YTestExpected - apply(YTestPredictMatrix, 1, mean)) ** 2 )
+        meanBias <- mean( (Fx - apply(YTestPredictMatrix, 1, mean)) ** 2 )
         meanVariance <- mean( apply(YTestPredictMatrix, 1, var) )
         meanErrorVar <- mean(noiseVar)
             

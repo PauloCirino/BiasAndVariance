@@ -26,7 +26,7 @@ shinyServer(function(input, output) {
             plotly::add_trace(   data = dataOrigin,
                                  x = ~X, y = ~Y,
                                  type = 'scatter', mode = 'lines',
-                                 name = 'Y',
+                                 name = 'Y(x)',
                                  line = list(color = 'rgba(235, 19, 19, 0.88)',
                                              width = 4)) %>%
             plotly::add_trace(   data = dataOrigin,
@@ -56,7 +56,7 @@ shinyServer(function(input, output) {
             plotly::add_trace(   data = dataOrigin,
                                  x = ~X, y = ~Y,
                                  type = 'scatter', mode = 'lines',
-                                 name = 'Function',
+                                 name = 'Y(x)',
                                  line = list(color = 'rgba(235, 19, 19, 0.88)',
                                              width = 4)) %>%
             plotly::add_trace(   data = dataOrigin,

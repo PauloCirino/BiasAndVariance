@@ -18,9 +18,14 @@ reactiveGenerateAll <- function(input){
     trainDataSample <- list()
     testDataSample <- list()
     
-    testData <- generateData(fun = fun, range = range, by = 0.1)
-    YTestExpected <- testData$Data$Y
+    testData <- generateData(fun = fun, range = range,
+                             by = 0.1)
+    Fx <- testData$Data$Y
     XTest <- testData$Data$X
+    
+    testData <- generateData(fun = fun, range = range,
+                             by = 0.1, noiseRange = noiseRange)
+    YTestExpected <- testData$Data$Y
     
     for (flex in modelFlexibility[1]:modelFlexibility[2]){
         YTestPredictMatrix <- matrix(ncol = numTrainedModels, nrow = length(YTestExpected))
@@ -57,10 +62,10 @@ reactiveGenerateAll <- function(input){
             }
         }
         
-        meanMSE <- mean( apply(YTestPredictMatrix, 2, function(x){
-            mean( (x - YTestExpected) ** 2 )
+        meanMSE <- mean( apply(YTestPredictMatrix, 2, function(Yhat){
+            mean( (Yhat - YTestExpected) ** 2 )
         }))
-        meanBias <- mean( (YTestExpected - apply(YTestPredictMatrix, 1, mean)) ** 2 )
+        meanBias <- mean( (Fx - apply(YTestPredictMatrix, 1, mean)) ** 2 )
         meanVariance <- mean( apply(YTestPredictMatrix, 1, var) )
         meanErrorVar <- mean(noiseVar)
         

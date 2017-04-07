@@ -39,7 +39,7 @@ callSVNFun <- function(){
         model <- e1071::svm( x = as.numeric(Xtrain),
                              y = Ytrain,
                              kernel = "polynomial",
-                             type = "eps-regression",
+                             type = "nu-regression",
                              degree = flexibility)
         
         predict(model, as.numeric(Xtest))
@@ -108,7 +108,7 @@ callPolinomialRegressionModel <- function(){
         trainDF <- data.frame(Y = Ytrain, X = Xtrain)
         testDF <- data.frame(X = Xtest)
         
-        model <- lm( Y ~ poly(X, flexibility), data = trainDF )
+        model <- lm( Y ~ poly(X, flexibility, raw = TRUE), data = trainDF )
         
         predict(model, testDF)
     }

@@ -24,12 +24,6 @@ shinyServer(function(input, output) {
         
         p <- plotly::plot_ly() %>%
             plotly::add_trace(   data = dataOrigin,
-                                 x = ~X, y = ~Y,
-                                 type = 'scatter', mode = 'lines',
-                                 name = 'Y(x)',
-                                 line = list(color = 'rgba(235, 19, 19, 0.88)',
-                                             width = 4)) %>%
-            plotly::add_trace(   data = dataOrigin,
                                  x = ~X, y = ~Fx,
                                  type = 'scatter', mode = 'lines',
                                  name = 'F(x)',
@@ -49,16 +43,10 @@ shinyServer(function(input, output) {
         reactiveResults <- reactiveRefresh()
         
         dataOrigin <- reactiveResults$dataOrigin
-        dataNoise <- reactiveResults$trainSample[[1]]
+        dataNoise <- reactiveResults$trainSample[[reactiveResults$modelFlexibility[1]]]
         modelsResults <- reactiveResults$trainSample
         
         p <- plotly::plot_ly() %>%
-            plotly::add_trace(   data = dataOrigin,
-                                 x = ~X, y = ~Y,
-                                 type = 'scatter', mode = 'lines',
-                                 name = 'Y(x)',
-                                 line = list(color = 'rgba(235, 19, 19, 0.88)',
-                                             width = 4)) %>%
             plotly::add_trace(   data = dataOrigin,
                                  x = ~X, y = ~Fx,
                                  type = 'scatter', mode = 'lines',
@@ -73,11 +61,11 @@ shinyServer(function(input, output) {
                                               line = list(color = 'rgba(109, 109, 109, 1)',
                                                           width = 2)))
         
-        for(i in 1:length(modelsResults)){
+        for(i in (reactiveResults$modelFlexibility[1]:reactiveResults$modelFlexibility[2]) ){
             p <- p %>%
                 plotly::add_lines(data = dataNoise,
                                   x = ~X, y = modelsResults[[i]]$Ypred,
-                                  name = paste('Flex.', i + input$modelFlexibility[1] - 1),
+                                  name = paste('Flex.', i ),
                                   type = 'scatter', mode = 'lines',
                                   line = list(width = 1.5),
                                   inherit = FALSE
@@ -95,19 +83,24 @@ shinyServer(function(input, output) {
        
         p <- plotly::plot_ly() %>%
             plotly::add_trace(   data = dataOrigin,
+                                 x = ~X, y = ~Fx,
+                                 type = 'scatter', mode = 'lines',
+                                 name = 'F(x)',
+                                 line = list(color = 'rgba(38, 91, 181, 0.89)',
+                                             width = 4)) %>%
+            plotly::add_trace(   data = dataOrigin,
                                  x = ~X, y = ~Y,
                                  type = 'scatter', mode = 'lines',
                                  name = 'Y',
                                  line = list(color = 'rgba(235, 19, 19, 0.88)',
                                              width = 4)) 
-            
-        for(i in 1:length(modelsResults)){
+        
+        for(i in (reactiveResults$modelFlexibility[1]:reactiveResults$modelFlexibility[2]) ){
             p <- p %>%
                 plotly::add_lines(data = dataOrigin,
                                   x = ~X, y = modelsResults[[i]]$Y,
-                                  name = paste('Flex.',
-                                               i + input$modelFlexibility[1] - 1),
                                   type = 'scatter', mode = 'lines',
+                                  name = paste('Flex.', i ),
                                   line = list(width = 1.5),
                                   inherit = FALSE
                 )
